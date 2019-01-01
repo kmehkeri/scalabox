@@ -1,0 +1,6 @@
+proxy:
+  enabled: true
+  host: proxy:8080
+  username: user
+  password: pass
+  exclude: localhost,127.0.0.1,.somedomain.com
