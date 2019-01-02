@@ -41,6 +41,7 @@ Vagrant.configure(2) do |config|
     vb.customize ["modifyvm", :id, "--vram", "32"]
     vb.customize ["modifyvm", :id, "--usb", "off"]
     vb.customize ["modifyvm", :id, "--usbehci", "off"]
+    vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
   end
 
   # System provisioning
