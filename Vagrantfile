@@ -96,7 +96,7 @@ Vagrant.configure(2) do |config|
     rm -f ~/{.bashrc.old,.bash_profile.old,.vimrc.old}
 
     # Install VIM Scala plugin
-    mkdir -p ~/.vim/{ftdetect,indent,syntax} && for d in ftdetect indent syntax ; do wget -O ~/.vim/$d/scala.vim https://raw.githubusercontent.com/derekwyatt/vim-scala/master/$d/scala.vim; done
+    mkdir -p ~/.vim/{ftdetect,indent,syntax} && for d in ftdetect indent syntax ; do wget -nv -O ~/.vim/$d/scala.vim https://raw.githubusercontent.com/derekwyatt/vim-scala/master/$d/scala.vim; done
 
     # Git setup
     git config --global credential.helper "cache --timeout=86400"
