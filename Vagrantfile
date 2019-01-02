@@ -91,9 +91,9 @@ Vagrant.configure(2) do |config|
 
     # Install dotfiles
     git clone https://github.com/kmehkeri/dotfiles.git ~/dotfiles
-    touch {.bashrc,.bash_profile,.vimrc}
+    touch {.bashrc,.bash_profile,.vimrc,.gitconfig}
     ~/dotfiles/install.sh
-    rm -f ~/{.bashrc.old,.bash_profile.old,.vimrc.old}
+    rm -f ~/{.bashrc.old,.bash_profile.old,.vimrc.old,.gitconfig.old}
 
     # Install VIM Scala plugin
     mkdir -p ~/.vim/{ftdetect,indent,syntax} && for d in ftdetect indent syntax ; do wget -nv -O ~/.vim/$d/scala.vim https://raw.githubusercontent.com/derekwyatt/vim-scala/master/$d/scala.vim; done
