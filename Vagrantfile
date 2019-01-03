@@ -45,7 +45,7 @@ Vagrant.configure(2) do |config|
   end
 
   # System provisioning
-  config.vm.provision "system", type: "shell", inline: <<-EOF.strip_heredoc
+  config.vm.provision "system-software", type: "shell", inline: <<-EOF.strip_heredoc
     # Add software sources
     apt-get -y update
     apt-get -y install apt-transport-https
@@ -77,6 +77,21 @@ Vagrant.configure(2) do |config|
     cat <<-FOF >/etc/lightdm/lightdm.conf.d/99-autologin-vagrant.conf
     [Seat:*]
     autologin-user=vagrant
+    FOF
+  EOF
+
+  config.vm.provision "system-spark", type: "shell", inline: <<-EOF.strip_heredoc
+    # Download and install Spark
+    wget https://archive.apache.org/dist/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz
+    tar -xzf spark-2.4.0-bin-hadoop2.7.tgz
+    rm spark-2.4.0-bin-hadoop2.7.tgz
+    mv spark-2.4.0-bin-hadoop2.7 /opt/
+    ln -s /opt/spark-2.4.0-bin-hadoop2.7 /opt/spark
+
+    # Set environment variables
+    cat <<-FOF >/etc/profile.d/spark.sh
+    export SPARK_HOME=/opt/spark
+    export PATH=\${PATH}:\${SPARK_HOME}/bin
     FOF
   EOF
 
