@@ -87,7 +87,7 @@ Vagrant.configure(2) do |config|
     # Set environment variables
     cat <<-FOF >/etc/profile.d/spark.sh
     export SPARK_HOME=/opt/spark
-    export PATH=\${PATH}:\${SPARK_HOME}/bin
+    export PATH=\\${PATH}:\\${SPARK_HOME}/bin
     FOF
   EOF
 
