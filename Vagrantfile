@@ -78,7 +78,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "system-spark", type: "shell", inline: <<-EOF.strip_heredoc
     # Download and install Spark
-    wget https://archive.apache.org/dist/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz
+    wget -nv https://archive.apache.org/dist/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz
     tar -xzf spark-2.4.0-bin-hadoop2.7.tgz
     rm spark-2.4.0-bin-hadoop2.7.tgz
     mv spark-2.4.0-bin-hadoop2.7 /opt/
