@@ -47,18 +47,20 @@ Vagrant.configure(2) do |config|
   # System provisioning
   config.vm.provision "system-software", type: "shell", inline: <<-EOF.strip_heredoc
     # Add software sources
+    export DEBIAN_FRONTEND=noninteractive
     apt-get -y update
     apt-get -y install apt-transport-https
     # * SBT
     echo "deb https://dl.bintray.com/sbt/debian /" >/etc/apt/sources.list.d/sbt.list
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 642AC823
     # * Docker
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 
     # Install software from repositories
     apt-get -y update
     apt-get -y autoremove
+    apt-get -y upgrade
     apt-get -y install docker-ce \
                        git \
                        guake \
