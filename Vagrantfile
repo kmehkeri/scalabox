@@ -72,12 +72,6 @@ Vagrant.configure(2) do |config|
 
     # Docker group for vagrant user
     usermod -aG docker vagrant
-
-    # Autologin vagrant user
-    cat <<-FOF >/etc/lightdm/lightdm.conf.d/99-autologin-vagrant.conf
-    [Seat:*]
-    autologin-user=vagrant
-    FOF
   EOF
 
   config.vm.provision "system-spark", type: "shell", inline: <<-EOF.strip_heredoc
@@ -92,6 +86,14 @@ Vagrant.configure(2) do |config|
     cat <<-FOF >/etc/profile.d/spark.sh
     export SPARK_HOME=/opt/spark
     export PATH=\${PATH}:\${SPARK_HOME}/bin
+    FOF
+  EOF
+
+  config.vm.provision "system-other", type: "shell", inline: <<-EOF.strip_heredoc
+    # Autologin vagrant user
+    cat <<-FOF >/etc/lightdm/lightdm.conf.d/99-autologin-vagrant.conf
+    [Seat:*]
+    autologin-user=vagrant
     FOF
   EOF
 
