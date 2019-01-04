@@ -92,6 +92,16 @@ Vagrant.configure(2) do |config|
     FOF
   EOF
 
+  config.vm.provision "system-intellij", type: "shell", inline: <<-EOF.strip_heredoc
+    # Download and install IntelliJ
+    wget -nv https://download.jetbrains.com/idea/ideaIC-2018.3.2.tar.gz
+    tar -xzf ideaIC-2018.3.2.tar.gz
+    ideadir=$(tar -tzf ideaIC-2018.3.2.tar.gz | head -1 | cut -d'/' -f1)
+    rm ideaIC-2018.3.2.tar.gz
+    mv ${ideadir} /opt
+    ln -s /opt/${ideadir} /opt/idea
+  EOF
+
   config.vm.provision "system-other", type: "shell", inline: <<-EOF.strip_heredoc
     # Autologin vagrant user
     cat <<-FOF >/etc/lightdm/lightdm.conf.d/99-autologin-vagrant.conf
@@ -125,6 +135,19 @@ Vagrant.configure(2) do |config|
     # Ammonite setup
     mkdir -p ~/.ammonite
     touch ~/.ammonite/session
+
+    # IntelliJ launcher
+    cat <<-FOF >~/Desktop/intellij.desktop
+    #!/usr/bin/env xdg-open
+    [Desktop Entry]
+    Version=1.0
+    Type=Application
+    Terminal=false
+    Exec=/opt/idea/bin/idea.sh
+    Name=IntelliJ Idea
+    Comment=IntelliJ Idea
+    Icon=/opt/idea/bin/idea.png
+    FOF
   EOF
 
 end
