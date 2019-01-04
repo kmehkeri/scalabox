@@ -59,6 +59,7 @@ Vagrant.configure(2) do |config|
 
     # Install software from repositories
     apt-get -y update
+    apt-get -y remove light-locker
     apt-get -y autoremove
     apt-get -y upgrade
     apt-get -y install docker-ce \
