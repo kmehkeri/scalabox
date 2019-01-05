@@ -6,13 +6,17 @@ require './strip'
 
 VAGRANT_ROOT = File.dirname(File.expand_path(__FILE__))
 LOCAL_CONFIG_FILE = File.join(VAGRANT_ROOT, 'local.yml')
- 
+
 localconfig = File.exists?(LOCAL_CONFIG_FILE) ? YAML.load_file(File.join(VAGRANT_ROOT, 'local.yml')) : nil
 proxy_enabled  = localconfig['proxy']['enabled']  rescue false
 proxy_host     = localconfig['proxy']['host']     rescue ''
 proxy_username = localconfig['proxy']['username'] rescue ''
 proxy_password = localconfig['proxy']['password'] rescue ''
 proxy_exclude  = localconfig['proxy']['exclude']  rescue ''
+
+APT_UPGRADE = true
+SPARK_VERSION = "2.4.0"
+INTELLIJ_VERSION = "IC-2018.3.2"
 
 Vagrant.configure(2) do |config|
   # Base box
@@ -61,7 +65,7 @@ Vagrant.configure(2) do |config|
     apt-get -y update
     apt-get -y remove light-locker
     apt-get -y autoremove
-    apt-get -y upgrade
+    #{APT_UPGRADE ? "apt-get -y upgrade" : ""}
     apt-get -y install docker-ce \
                        git \
                        guake \
@@ -79,11 +83,12 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "system-spark", type: "shell", inline: <<-EOF.strip_heredoc
     # Download and install Spark
-    wget -nv https://archive.apache.org/dist/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz
-    tar -xzf spark-2.4.0-bin-hadoop2.7.tgz
-    rm spark-2.4.0-bin-hadoop2.7.tgz
-    mv spark-2.4.0-bin-hadoop2.7 /opt/
-    ln -s /opt/spark-2.4.0-bin-hadoop2.7 /opt/spark
+    spark_file=spark-#{SPARK_VERSION}-bin-hadoop2.7
+    wget -nv https://archive.apache.org/dist/spark/spark-#{SPARK_VERSION}/${spark_file}.tgz
+    tar -xzf ${spark_file}.tgz
+    rm ${spark_file}.tgz
+    mv ${spark_file} /opt/
+    ln -s /opt/${spark_file} /opt/spark
 
     # Set environment variables
     cat <<-FOF >/etc/profile.d/spark.sh
@@ -94,10 +99,10 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "system-intellij", type: "shell", inline: <<-EOF.strip_heredoc
     # Download and install IntelliJ
-    wget -nv https://download.jetbrains.com/idea/ideaIC-2018.3.2.tar.gz
-    tar -xzf ideaIC-2018.3.2.tar.gz
-    ideadir=$(tar -tzf ideaIC-2018.3.2.tar.gz | head -1 | cut -d'/' -f1)
-    rm ideaIC-2018.3.2.tar.gz
+    wget -nv https://download.jetbrains.com/idea/idea#{INTELLIJ_VERSION}.tar.gz
+    tar -xzf idea#{INTELLIJ_VERSION}.tar.gz
+    ideadir=$(tar -tzf idea#{INTELLIJ_VERSION}.tar.gz | head -1 | cut -d'/' -f1)
+    rm idea#{INTELLIJ_VERSION}.tar.gz
     mv ${ideadir} /opt
     ln -s /opt/${ideadir} /opt/idea
   EOF
