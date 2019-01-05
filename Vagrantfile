@@ -137,6 +137,7 @@ Vagrant.configure(2) do |config|
     touch ~/.ammonite/session
 
     # IntelliJ launcher
+    mkdir -p ~/Desktop
     cat <<-FOF >~/Desktop/intellij.desktop
     #!/usr/bin/env xdg-open
     [Desktop Entry]
