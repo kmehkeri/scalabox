@@ -68,8 +68,10 @@ Vagrant.configure(2) do |config|
     #{APT_UPGRADE ? "apt-get -y upgrade" : ""}
     apt-get -y install docker-ce \
                        git \
+                       gitg \
                        guake \
                        httpie \
+                       openjdk-8-jdk-headless \
                        scala \
                        sbt \
                        vim
