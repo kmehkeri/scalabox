@@ -14,7 +14,7 @@ proxy_username = localconfig['proxy']['username'] rescue ''
 proxy_password = localconfig['proxy']['password'] rescue ''
 proxy_exclude  = localconfig['proxy']['exclude']  rescue ''
 
-APT_UPGRADE = true
+APT_UPGRADE = false
 SPARK_VERSION = "2.4.0"
 INTELLIJ_VERSION = "IC-2018.3.2"
 
