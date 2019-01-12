@@ -50,18 +50,20 @@ Vagrant.configure(2) do |config|
 
   # System provisioning
   config.vm.provision "system-software", type: "shell", inline: <<-EOF.strip_heredoc
-    # Add software sources
+    echo "=== Add software sources ==="
     export DEBIAN_FRONTEND=noninteractive
     apt-get -y update
     apt-get -y install apt-transport-https
-    # * SBT
+
+    echo "=== ... for SBT ==="
     echo "deb https://dl.bintray.com/sbt/debian /" >/etc/apt/sources.list.d/sbt.list
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 642AC823
-    # * Docker
+    
+    echo "=== ... for Docker ==="
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
     add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 
-    # Install software from repositories
+    echo "=== Install/remove software ==="
     apt-get -y update
     apt-get -y remove light-locker
     apt-get -y autoremove
@@ -75,16 +77,15 @@ Vagrant.configure(2) do |config|
                        scala \
                        sbt \
                        vim
-    
-    # Install Ammonite
-    sh -c '(echo "#!/usr/bin/env sh" && curl -L https://github.com/lihaoyi/Ammonite/releases/download/1.6.0/2.12-1.6.0) > /usr/local/bin/amm && chmod +x /usr/local/bin/amm'
+  EOF
 
-    # Docker group for vagrant user
-    usermod -aG docker vagrant
+  config.vm.provision "system-ammonite", type: "shell", inline: <<-EOF.strip_heredoc
+    echo "=== Install Ammonite ==="
+    sh -c '(echo "#!/usr/bin/env sh" && curl -L https://github.com/lihaoyi/Ammonite/releases/download/1.6.0/2.12-1.6.0) > /usr/local/bin/amm && chmod +x /usr/local/bin/amm'
   EOF
 
   config.vm.provision "system-spark", type: "shell", inline: <<-EOF.strip_heredoc
-    # Download and install Spark
+    echo "=== Install Spark ==="
     spark_file=spark-#{SPARK_VERSION}-bin-hadoop2.7
     wget -nv https://archive.apache.org/dist/spark/spark-#{SPARK_VERSION}/${spark_file}.tgz
     tar -xzf ${spark_file}.tgz
@@ -92,7 +93,7 @@ Vagrant.configure(2) do |config|
     mv ${spark_file} /opt/
     ln -s /opt/${spark_file} /opt/spark
 
-    # Set environment variables
+    echo "=== Environment variables for Spark ==="
     cat <<-FOF >/etc/profile.d/spark.sh
     export SPARK_HOME=/opt/spark
     export PATH=\\${PATH}:\\${SPARK_HOME}/bin
@@ -100,7 +101,7 @@ Vagrant.configure(2) do |config|
   EOF
 
   config.vm.provision "system-intellij", type: "shell", inline: <<-EOF.strip_heredoc
-    # Download and install IntelliJ
+    echo "=== Install IntelliJ ==="
     wget -nv https://download.jetbrains.com/idea/idea#{INTELLIJ_VERSION}.tar.gz
     tar -xzf idea#{INTELLIJ_VERSION}.tar.gz
     ideadir=$(tar -tzf idea#{INTELLIJ_VERSION}.tar.gz | head -1 | cut -d'/' -f1)
@@ -110,16 +111,19 @@ Vagrant.configure(2) do |config|
   EOF
 
   config.vm.provision "system-other", type: "shell", inline: <<-EOF.strip_heredoc
-    # Autologin vagrant user
+    echo "=== Autologin vagrant user ==="
     cat <<-FOF >/etc/lightdm/lightdm.conf.d/99-autologin-vagrant.conf
     [Seat:*]
     autologin-user=vagrant
     FOF
+    
+    echo "=== Add vagrant to docker group ==="
+    usermod -aG docker vagrant
   EOF
 
   # User provisioning
   config.vm.provision "user", type: "shell", privileged: false, inline: <<-EOF.strip_heredoc
-    # Autostart Guake
+    echo "=== Autostart Guake ==="
     mkdir -p ~/.config/autostart
     cat <<-FOF >~/.config/autostart/guake.desktop
     [Desktop Entry] 
@@ -127,23 +131,23 @@ Vagrant.configure(2) do |config|
     Exec=guake
     FOF
 
-    # Install dotfiles
+    echo "=== Install dotfiles ==="
     git clone https://github.com/kmehkeri/dotfiles.git ~/dotfiles
     touch {.bashrc,.bash_profile,.vimrc,.gitconfig}
     ~/dotfiles/install.sh
     rm -f ~/{.bashrc.old,.bash_profile.old,.vimrc.old,.gitconfig.old}
 
-    # Install VIM Scala plugin
+    echo "=== Install Scala plugin for VIM ==="
     mkdir -p ~/.vim/{ftdetect,indent,syntax} && for d in ftdetect indent syntax ; do wget -nv -O ~/.vim/$d/scala.vim https://raw.githubusercontent.com/derekwyatt/vim-scala/master/$d/scala.vim; done
 
-    # Git setup
+    echo "=== Git config ==="
     git config --global credential.helper "cache --timeout=86400"
 
-    # Ammonite setup
+    echo "=== Ammonite setup ==="
     mkdir -p ~/.ammonite
     touch ~/.ammonite/session
 
-    # IntelliJ launcher
+    echo "=== IntelliJ launcher ==="
     mkdir -p ~/Desktop
     cat <<-FOF >~/Desktop/intellij.desktop
     #!/usr/bin/env xdg-open
