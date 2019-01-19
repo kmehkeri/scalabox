@@ -81,7 +81,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "system-ammonite", type: "shell", inline: <<-EOF.strip_heredoc
     echo "=== Install Ammonite ==="
-    sh -c '(echo "#!/usr/bin/env sh" && curl -L https://github.com/lihaoyi/Ammonite/releases/download/1.6.0/2.12-1.6.0) > /usr/local/bin/amm && chmod +x /usr/local/bin/amm'
+    sh -c '(echo "#!/usr/bin/env sh" && curl -fLsS https://github.com/lihaoyi/Ammonite/releases/download/1.6.0/2.12-1.6.0) > /usr/local/bin/amm && chmod +x /usr/local/bin/amm'
   EOF
 
   config.vm.provision "system-spark", type: "shell", inline: <<-EOF.strip_heredoc
