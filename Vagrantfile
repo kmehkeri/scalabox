@@ -79,6 +79,12 @@ Vagrant.configure(2) do |config|
                        vim
   EOF
 
+  config.vm.provision "system-docker-compose", type: "shell", inline: <<-EOF.strip_heredoc
+    echo "=== Install Docker-compose ==="
+    curl -fLsS "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-Linux-x86_64" -o /usr/local/bin/docker-compose
+    chmod +x /usr/local/bin/docker-compose
+  EOF
+
   config.vm.provision "system-ammonite", type: "shell", inline: <<-EOF.strip_heredoc
     echo "=== Install Ammonite ==="
     sh -c '(echo "#!/usr/bin/env sh" && curl -fLsS https://github.com/lihaoyi/Ammonite/releases/download/1.6.0/2.12-1.6.0) > /usr/local/bin/amm && chmod +x /usr/local/bin/amm'
